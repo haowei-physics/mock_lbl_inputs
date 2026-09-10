@@ -1,0 +1,665 @@
+[neut]
+
+number_of_events = 50000 # the number of probe interactions to simulate
+
+# cross_section_table_path = "../data" # this can be used to override $NEUT_CRSPATH
+
+# verbosity = "loud"
+# verbosity = "quiet"
+verbosity = "very_quiet"
+
+rng_seed = "time"
+# rng_seed = "file"
+
+output_format = "neutroot"
+#output_format = "NuHepMC"
+
+simulation_mode = "neutrino" # This option includes electron scattering
+# simulation_mode = "others"
+
+[neut.vertex]
+
+# position_type options:
+#
+position_type = "origin" # place the vertex at [0.0, 0.0, 0.0]
+#
+# position_type = "fixed" # must be accompanied by position
+# position =  [0.0, 0.0, 0.0]
+#
+# position_type = "random" # must be accompanied by radius
+# radius =  100.5
+
+[neut.probe]
+
+# must be one of numu(bar), nue(bar), nutau(bar), electron
+species = "nuebar"
+throwinke = "false"
+
+
+# direction_type options:
+#
+direction_type = "z" # probe approaches target along [0.0, 0.0, 1.0]
+#
+# direction_type = "fixed" # probe approaches target along vector specified by direction
+# direction [0.0, 0.0, 1.0] # same as "z"
+#
+# direction_type = "random" # probe approaches target isotropically
+
+# energy_spectrum_type options:
+#
+# energy_spectrum_type = "fixed" # set fixed probe energy with "energy_mev"
+# energy_mev = 600.0
+#
+# energy_spectrum_type = "uniform" # set energy range for uniform random energy with "energy_range_mev"
+# energy_range_mev = [100.0, 1000.0]
+#
+energy_spectrum_type = "root"
+energy_histogram = [ "lbl_config/hk/t2kflux_2020_plus250kA_uniform.root", "enu_sk_nueb", "gev"]
+
+[neut.target]
+
+# example for H20, two free protons and an oxygen nuclei.
+num_nucleons = 16
+num_bound_protons = 8
+num_free_protons = 2
+
+#or for some magic targets can set based on name:
+# target_name = "H2O" # or C, CH, Fe, Pb
+
+[neut.target.hadron_FSI]
+
+cascade_model =  "default" # options are "none",""default", "incl-hybrid" (which runs incl when compatible, and standard if not) and "incl"
+deexcitation = "o16_deexcitation" # options are "off","nucdeex","abla" and "o16_deexcitation". "abla" is Only compatible with INCL. "nucdeex" and "016..." are only compatible with default cascade
+nucleon_absorption_and_pion_ejection = "on" # default cascade-only option
+
+
+[neut.target.hadron_FSI.pion_cascade]
+
+pion_rescattering = "on"
+pion_rescattering_nuclear_model = "data_driven" # can also be "lfg" or "rfg"
+
+pion_model_low_energy = "tuned" # can also be "salcedo"
+pion_model_high_energy = "proton_neutron_separated" # can also be "salcedo"
+pion_kinematic_model = "SAID" # "can also be "isotropic_decay"
+
+pion_coulomb_correction = "off"
+
+qe = 1.069
+qe_high = 1.824
+inelastic = 1.002
+absorption = 1.404
+coherent = 1.0
+charge_exchange = 0.697
+charge_exchange_high = 1.800
+
+qe_fraction = 1.0
+coh_fraction = 0.0
+charge_exchange_fraction = 0.0
+
+mean_free_path = 1.0
+
+[neut.target.hadron_FSI.nucleon_cascade]
+
+nucleon_rescattering = "on"
+nucleon_rescattering_nuclear_model = "lfg" # or "gfg"
+
+nucleon_effective_mass = "on"
+FSI_pauli_blocking_scaling = 1.0
+
+fsi_strength = 1
+elastic = 1
+single_pi_prod = 1
+double_pi_prod = 1
+
+
+[neut.target.nuclear_effects]
+
+fermi_motion = "on"
+spp_sis_dis_nucmod = "lfg"
+#spp_sis_dis_nucmod = "rfg"
+
+# turn on/off binding energy for SPP
+spp_binding_energy = "off"
+#spp_binding_energy = "on"  # only valid for DCC for now.
+
+# binding energy values
+spp_lfg_binding_energy = 7.0 # MeV. Constant term other than Fermi energy
+spp_rfg_binding_energy = 34.0 # MeV
+
+pauli_blocking = "on"
+# N.B. this isn't really equivalent to turning off PB as the input HTs already have PB included
+pauli_blocking_2p2h = "on"
+pauli_blocking_fsi = "on"
+# pauli_blocking_fsi = "off"
+# pauli_blocking_fsi = "hybrid" # Reduces PB probability for nucleons with KE < 150
+
+# formation_length = "on"
+# formation_length = "off"
+formation_length = "on_except_qe"
+# formation_length = "on_multpi_DIS"
+formation_zone_scat_parameter = 0.08
+
+[neut.interaction_model]
+
+flag_pi0_decay = "off"
+#flag_pi0_decay = "on" # describe pi0 decay into two gamma in the final state
+
+mode_choice_type = "normal" # choose according to nominal cross-section prediction
+# mode_choice_type = "rescaled" # read mode rescaling's from neut.interaction_model.mode_rescaling table
+# mode_choice_type = "single" # set a single NEUT mode to simulate with "mode"
+
+# mode = "CC_QE_nu"
+# mode = "CC_2p2h_nu"
+# mode = "CC_RES_ppi+_nu"
+# mode = "CC_RES_ppi0_nu"
+# mode = "CC_RES_npi+_nu"
+# mode = "CC_COH_nu"
+# mode = "CC_DIF_nu"
+# mode = "CC_eta_nu"
+# mode = "CC_kaon_nu"
+# mode = "CC_1gamma_nu"
+# mode = "CC_multi_pi_nu"
+# mode = "CC_DIS_nu"
+
+# mode = "NC_elastic_free_p_nu"
+# mode = "NC_elastic_bound_p_nu"
+# mode = "NC_elastic_n_nu"
+# mode = "NC_RES_npi0_nu"
+# mode = "NC_RES_ppi0_nu"
+# mode = "NC_RES_ppi-_nu"
+# mode = "NC_RES_npi+_nu"
+# mode = "NC_COH_nu"
+# mode = "NC_DIF_nu"
+# mode = "NC_eta_n_nu"
+# mode = "NC_eta_p_nu"
+# mode = "NC_kaon_n_nu"
+# mode = "NC_kaon_p_nu"
+# mode = "NC_multi_pi_nu"
+# mode = "NC_1gamma_n_nu"
+# mode = "NC_1gamma_p_nu"
+# mode = "NC_DIS_nu"
+
+# mode = "CC_QE_free_proton_nubar"
+# mode = "CC_QE_bound_proton_nubar"
+# mode = "CC_2p2h_nubar"
+# mode = "CC_RES_npi-_nubar"
+# mode = "CC_RES_ppi0_nubar"
+# mode = "CC_RES_ppi-_nubar"
+# mode = "CC_COH_nubar"
+# mode = "CC_DIF_nubar"
+# mode = "CC_eta_nubar"
+# mode = "CC_kaon_nubar"
+# mode = "CC_1gamma_nubar"
+# mode = "CC_multi_pi_nubar"
+# mode = "CC_DIS_nubar"
+
+# mode = "NC_elastic_free_p_nubar"
+# mode = "NC_elastic_bound_p_nubar"
+# mode = "NC_elastic_n_nubar"
+# mode = "NC_RES_npi0_nubar"
+# mode = "NC_RES_ppi0_nubar"
+# mode = "NC_RES_ppi-_nubar"
+# mode = "NC_RES_npi+_nubar"
+# mode = "NC_COH_nubar"
+# mode = "NC_DIF_nubar"
+# mode = "NC_eta_n_nubar"
+# mode = "NC_eta_p_nubar"
+# mode = "NC_kaon_n_nubar"
+# mode = "NC_kaon_p_nubar"
+# mode = "NC_1gamma_n_nubar"
+# mode = "NC_1gamma_p_nubar"
+# mode = "NC_multi_pi_nubar"
+# mode = "NC_DIS_nubar"
+
+[neut.interaction_model.mode_rescaling]
+
+# quotes required for keys with +/- characters
+"CC_QE_nu" = 1.0
+"CC_2p2h_nu" = 1.0
+"CC_RES_ppi+_nu" = 1.0
+"CC_RES_ppi0_nu" = 1.0
+"CC_RES_npi+_nu" = 1.0
+"CC_COH_nu" = 1.0
+"CC_DIF_nu" = 1.0
+"CC_eta_nu" = 1.0
+"CC_kaon_nu" = 1.0
+"CC_1gamma_nu" = 1.0
+"CC_multi_pi_nu" = 1.0
+"CC_DIS_nu" = 1.0
+
+"NC_elastic_free_p_nu" = 1.0
+"NC_elastic_bound_p_nu" = 1.0
+"NC_elastic_n_nu" = 1.0
+"NC_RES_npi0_nu" = 1.0
+"NC_RES_ppi0_nu" = 1.0
+"NC_RES_ppi-_nu" = 1.0
+"NC_RES_npi+_nu" = 1.0
+"NC_COH_nu" = 1.0
+"NC_DIF_nu" = 1.0
+"NC_eta_n_nu" = 1.0
+"NC_eta_p_nu" = 1.0
+"NC_kaon_n_nu" = 1.0
+"NC_kaon_p_nu" = 1.0
+"NC_multi_pi_nu" = 1.0
+"NC_1gamma_n_nu" = 1.0
+"NC_1gamma_p_nu" = 1.0
+"NC_DIS_nu" = 1.0
+
+"CC_QE_free_proton_nubar" = 1.0
+"CC_QE_bound_proton_nubar" = 1.0
+"CC_2p2h_nubar" = 1.0
+"CC_RES_npi-_nubar" = 1.0
+"CC_RES_ppi0_nubar" = 1.0
+"CC_RES_ppi-_nubar" = 1.0
+"CC_COH_nubar" = 1.0
+"CC_DIF_nubar" = 1.0
+"CC_eta_nubar" = 1.0
+"CC_kaon_nubar" = 1.0
+"CC_1gamma_nubar" = 1.0
+"CC_multi_pi_nubar" = 1.0
+"CC_DIS_nubar" = 1.0
+
+"NC_elastic_free_p_nubar" = 1.0
+"NC_elastic_bound_p_nubar" = 1.0
+"NC_elastic_n_nubar" = 1.0
+"NC_RES_npi0_nubar" = 1.0
+"NC_RES_ppi0_nubar" = 1.0
+"NC_RES_ppi-_nubar" = 1.0
+"NC_RES_npi+_nubar" = 1.0
+"NC_COH_nubar" = 1.0
+"NC_DIF_nubar" = 1.0
+"NC_eta_n_nubar" = 1.0
+"NC_eta_p_nubar" = 1.0
+"NC_kaon_n_nubar" = 1.0
+"NC_kaon_p_nubar" = 1.0
+"NC_1gamma_n_nubar" = 1.0
+"NC_1gamma_p_nubar" = 1.0
+"NC_multi_pi_nubar" = 1.0
+"NC_DIS_nubar" = 1.0
+
+[neut.interaction_model.radiative_corrections]
+
+model = "off"
+# model = "simple_toy_model"
+gamma_attach_fraction = 0.1
+egamma_low_threshold = 10
+gamma_angular_distribution = "exp_decay"
+# gamma_angular_distribution = "isotropic"
+
+[neut.interaction_model.electron]
+
+q2_threshold_MeV = 10000
+coulomb = { enabled = "on", use_ema = "off" }
+q3_dependent_eb = { enabled = "off", gradient = 0, intercept = 0 }
+
+[neut.interaction_model.QE]
+
+#model = "nieves" # use SF model by ueno-mori for NC (unrecommend)
+#model = "nieves_furmanski_abe" # use SF model by furmanski-abe for NC
+model = "rome" # Benhar SF
+# model = "llewelyn-smith"
+#model = "rmf"
+
+erpa = "off" # incompatible with model = "nieves", use nieves.rpa = "on" instead
+
+kappa = 1.0
+
+second_class_currents_vector_scale = 0.0
+second_class_currents_axial_scale = 0.0
+pseudo_scalar_scale = 1
+
+pionless_delta_decay = "off"
+pionless_delta_decay_fraction = 0.0
+
+# Below is for SF and RMF only
+# Defaults for spectral function SRC definition
+src_model_type = "box" # NEUT default. Uses max energy and momentum definitions below
+#src_model_type = "nuwro" # NuWro parabolic cut
+#src_model_type = "fermi" # Parabolic cut based on the Fermi surface
+
+# Defaults for NEUT box cut SRC definition (MeV, MeV/c)
+src_maximum_energy = 100
+src_maximum_momentum = 300
+
+# Kinematic threshold for SRC events. Sometimes called "Jailing cut". Can be applied to all src_model_types
+# Defined by E_kin = Enu - Elep - TN - TN_SRC > threshold
+#   Default value is 0.0 to match original NEUT definition.
+#   Use 14.00 to match with NuWro definition.
+#   Use -1.0 to use an automatic isospin-dependent threshold
+src_kinematic_threshold = 0.0
+
+[neut.interaction_model.QE.rmf]
+# Nuclear potential for the RDIWA model. By default ED-RMF is used.
+potential = "edrmf"
+
+rmf_tensor_memory_mode = "normal"
+# load the tensors into a shared memory segment rather than process-local memory
+# this is useful for running multiple NEUT instances on the same machine but may
+# require manual clean up of the shared memory segments if NEUT crashes.
+# rmf_tensor_memory_mode = "shared"
+# mmap the pre-inflated tensors straight off disk rather than loading them into
+# shared memory/RAM
+# rmf_tensor_memory_mode = "low"
+
+# C12 Removal energy shift
+c12_Eb_shift = 0
+
+# C12 s1/2 shell shift
+c12_sshell_shift = 0
+
+# C12 p3/2 shell shift
+c12_pshell_shift = 0
+
+# O16 p1/2 shell shift
+o16_p1shell_shift = 0
+
+# O16 p3/2 shell shift
+o16_p3shell_shift = 0
+
+# O16 s1/2 shell shift
+o16_s1shell_shift = 0
+
+# O16 Removal energy shift
+o16_Eb_shift = 0
+
+# This is the scattered lepton angle in electron scattering
+theta_l = 36
+
+[neut.interaction_model.QE.rome]
+
+# Set from nuclear target if not overriden here
+fermi_surface_for_pauli_mev = -1
+
+# Shift SF inputs along the separation energy axis
+separation_energy_shift_gev = 0
+
+# Behavior if chosen separation energy for event is unphysical
+separation_energy_negative_behavior = "pin_to_0"
+# separation_energy_negative_behavior = "redraw_from_sf"
+
+# Fraction of 'other' nucleon in correlated
+# pair which is the same particle type, i.e. if this is set to
+# 0.3 then 30% of correlated pair events will be NN and 70% will
+# be the default np. Taken as 5% from statements in electron scattering, saying np
+# states dominates pp and nn states by factor 20, Affect both SF and ED-RMF model
+NN_pair_fraction = 0.34
+
+# Default value is 0, there are tables for -0.08 so it will work as well
+strange_axial_coupling = 0.0
+#strange_axial_coupling = -0.08
+
+# SF table for carbon
+sf_C12_table = "tot" # Previous SF. Nucl. Phys. A579, 493 (1994), Phys. Rev. D 72, 053005 (2005)
+#sf_C12_table = "2024" # New SF. Phys. Rev. C 110, 054612 (2024)
+
+sf_neutron_energy_corr = "on"
+#sf_neutron_energy_corr = "off"
+
+sf_pauli_blocking = "rfg"
+# sf_pauli_blocking = "lfg"
+
+[neut.interaction_model.QE.nieves]
+
+nuclear_model = "lfg"
+rpa = "on"
+
+rpa_parameters.fp0in = 0.33
+rpa_parameters.fp0ex = 0.45
+rpa_parameters.fstar = 2.13
+rpa_parameters.af = 1.0
+rpa_parameters.pilambda = 1200.0
+rpa_parameters.cr0 = 2.0
+rpa_parameters.rholambda = 2500
+rpa_parameters.gp = 0.63
+rpa_parameters.xmpi = 139.57
+rpa_parameters.xmrho = 775.4
+rpa_parameters.irel = 1.0
+
+binding_energy = "on"
+binding_energy_shift = "on"
+
+[neut.interaction_model.QE.vector_form_factors]
+
+# cc_form = "dipole"
+cc_form = "BBBA05"
+# cc_form = "BBBA07"
+
+# "scaling": scale cross section to CCQE. Unrecommended.
+# nc_form = "scale"
+# nc_form = "dipole"
+nc_form = "BBBA05"
+
+# this might be used for seconf-class form factor.
+# needs to be specified even if we choose BBBA.
+dipole.vector_mass = 0.84
+
+# Type of form factor for CCQE axial
+[neut.interaction_model.QE.axial_form_factors]
+form = "dipole"
+# form = "BBBA07"
+# form = "two_component"
+# form = "three_component"
+# form = "z_expansion"
+# form = z_expansion_newgen
+# form = z_expansion_oldway
+
+# Axial mass for dipole form factor
+[neut.interaction_model.QE.axial_form_factors.dipole]
+axial_mass = 1.21
+nc_axial_mass = 1.21
+
+[neut.interaction_model.QE.axial_form_factors.n_component]
+
+# 2/3 component, TN 315 p 25
+# ANL/BNL 'fixed' fit
+alpha = 0.23
+beta = 1.22
+gamma = 0.44
+theta = -0.26
+
+# Z-expansion TN 315 p 21 <3GeV as recommended
+# Use official z-expansion parameters, not Patrick's results
+[neut.interaction_model.QE.axial_form_factors.z_expansion]
+pnt = 4
+#apply 4-sum rule
+q4 = 1
+t0 = -0.280
+tc = 0.1764
+
+a0 = 0.5
+a1 = 2.28
+a2 = 0.26
+a3 = -5.20
+a4 =  2.60
+a5 =  0.5
+a6 =  0.5
+a7 =  0.5
+a8 =  0.5
+a9 =  0.5
+
+ga = 1.2723
+
+transferttype = 0
+
+# Based on https://doi.org/10.1103/PhysRevD.93.113015
+covarmatrix = [
+    [0.0169, 0.0455, -0.22035, 0.214461],
+    [0.0455, 1.0, -2.245, 0.9909],
+    [-0.22035, -2.245, 6.25, -4.62375],
+    [0.214461, 0.9909, -4.62375, 7.29]
+]
+
+transfertmatrix = [
+    [-0.99829974, 0.03752191, 0.04216688, -0.01454961],
+    [-0.03440096, 0.12232774, -0.97877435, -0.16078953],
+    [-0.04658045, -0.81323205, -0.19003449, 0.54806093],
+    [0.00666831, 0.56769857, -0.06410632, 0.82070960]
+]
+
+# -OPT=000, manual configuration
+# -OPT=100, Meyer published natif
+# -OPT=101, Meyer published PCA
+# -OPT=102, Meyer published ZCA
+# -OPT=103, Meyer published L1
+# -OPT=104, Meyer published L1Norm
+# -OPT=110, Meyer updated natif
+# -OPT=111, Meyer updated PCA
+# -OPT=112, Meyer updated ZCA
+# -OPT=113, Meyer updated L1
+# -OPT=114, Meyer updated L1Norm
+# -OPT=200, LQCD natif
+# -OPT=201, LQCD PCA
+# -OPT=202, LQCD ZCA
+# -OPT=203, LQCD L1
+# -OPT=204, LQCD L1Norm
+preset = "000"
+
+v0 = 0.0
+v1 = 0.0
+v2 = 0.0
+v3 = 0.0
+v4 = 0.0
+v5 = 0.0
+v6 = 0.0
+v7 = 0.0
+v8 = 0.0
+v9 = 0.0
+
+# Type of 2p2h model implemented
+[neut.interaction_model.2p2h]
+
+#model = "nieves_table"
+model = "nieves_hadron_tensor"
+
+qval = "zero"
+# qval = "r-dependent"
+
+# 3p3h is based on NuWro implementation outlined in Phys. Rev. D 111, 036032
+use3p3h = true
+
+# Resonant pion production model
+[neut.interaction_model.ResPP]
+
+model = "rein_sehgal"
+#model = "kabirnezhad"
+#model = "dcc"
+
+# Form factors for Rein-Sehgal model
+[neut.interaction_model.ResPP.rein_sehgal]
+
+# form_factors = "originalFF"
+form_factors = "graczyk_sobczyk"
+
+# How the form factors evolve with the number of oscillator quanta in the resonant state
+# Best described in Rein 1987, equation 3 and 4
+# See eq 3.12 of Rein-Sehgal 1981 and comments at end of page 95
+# "Ad hoc factor introduced in order to remedy certain unphysical aspects of the model associated with the existence of time-like excitations" in the FKR model
+# Also see Ravndal 1973, equation 5.1
+originalFF.nr_type = "original"
+# originalFF.nr_type = "halved"
+
+axial_mass_res_non_pi = 1.21
+# Value of axial mass
+axial_mass = 0.95
+# Value of vector mass
+vector_mass = 0.84
+# Normalisation of CA5(Q^2=0) form factor in Graczyk-Sobczyk FF
+ca5 = 1.01
+# Scaling of non-resonant background in Rein-Sehgal model
+nonresonant_background_scale = 1.3
+
+# Method for producing the pi+nucleon system from the decay of the resonant state
+# See Rein-Sehgal section 2.3 and the excellent appendix
+# Isotropic emits isotropically in resonance rest frame
+# Delta uses the Delta resonance only
+# "all_resonances" uses the three lowest resonances (See Rein-Sehgal 1981 section 2.3)
+# "delta_plus_isotropic" does an accept-reject on the size of the xsec vs the size of the xsec of the Delta resonance only: if the cross section was Delta dominated, use the Delta, if it was not use an isotropic distribution
+[neut.interaction_model.ResPP.rein_sehgal.ejection]
+
+# model options:
+# model="isotropic"
+# model="delta_only"
+# model="all_resonances"
+model = "delta_plus_isotropic"
+
+# Multipliers for the matrix elements in the FKR model, used ONLY to calculate the resonance -> pi+nucleon state. These are *NOT* used for the cross section calculation, only for the decay process
+rop3p3_mult = 1
+rom3m3_mult = 1
+rop1p1_mult = 1
+rom1m1_mult = 1
+rop3p1_mult = 1
+rom1m3_mult = 1
+rop3m1_mult = 1
+rop1m3_mult = 1
+
+[neut.interaction_model.ResPP.kabirnezhad]
+
+axial_mass = 1.06
+bkg_axial_mass = 1.03
+vector_mass = 0.84
+ca5 = 1.02
+
+[neut.interaction_model.ResPP.dcc]
+# model options:
+# isotroic: isotropic distribution given by structure function.
+# comb_amp_anisotropic: W and Q2 are given by structure function, throw adler angles with amplitudes (RECOMMENDED)
+# amp_isotropic: uses amplitudes, but assumes isotropic distribution.
+# amp_anisotripic: fully uses amplitudes including pion angular distribution.
+#pion_angle="isotropic"
+pion_angle="comb_amp_anisotropic"
+#pion_angle="amp_isotropic"
+#pion_angle="amp_anisotropic"
+
+# spline options (only takes place in amplitude code):
+# original: Original spline code provided by author. Slow but less RAM.
+# new: New spline code based on TSpline3. Fast but more RAM (~2.6 GB). Recommended.
+spline_method = "new"
+#spline_method = "original"
+
+# Coherent model
+[neut.interaction_model.COH]
+
+# model = "rein_sehgal"
+# model = "kartavtsev"
+model = "berger_sehgal"
+
+axial_mass = 1
+radius = 1.0
+fa1 = 0.0
+fa2 = 0.0
+
+[neut.interaction_model.DIF]
+
+model = "rein_w_cut"
+# model = "rein"
+
+axial_mass = 1.1
+nuclear_volume = 7.0
+
+[neut.interaction_model.MPiDIS]
+
+# pdf_set = "grv94_di"
+pdf_set = "grv98_lo"
+
+multiplicity_model = "neut"
+# multiplicity_model = "fit_to_bc"
+# multiplicity_model = "AGKY"
+
+[neut.interaction_model.MPiDIS.BodekYang]
+
+# correction_version = "BY19"
+correction_version = "BY05"
+# correction_version = "off"
+
+low_W_K_factor = "off"
+force_ax_vec_equal = "off"
+
+seaqbar_factor = 1
+rlong_variation = 0
+
+
+[neut.interaction_model.tauola]
+decay_mode = "all"
+polarity_mode = "taupol" # calculated by taupol.f
+#polarity_mode = "fixed" # require to set "polarity"
+#polarity = [0.0, 0.0, 1.0]

@@ -7,7 +7,7 @@
 #include "TRandom3.h"
 #include "TTree.h"
 
-#include "/home/haowei/projects/NuFast-LBL/NuFast_LBL.cpp"
+#include "NuFast_LBL.cpp"
 
 // The goal of this script is to compute the POT, oscillation and selection
 // efficiency weights, and make fake recon variables, for the input flattree.
@@ -17,13 +17,8 @@ int FakeRecon (std::string input_file,
                std::string recon_smearing_matrix = "lbl_config/hk/smearing.root",
                std::string response_file = "lbl_config/hk/response.root",
                UInt_t rng_seed = 1234,
-               // The uniform-binned copy of the T2K 2020 public release, kept in
-               // flux/. recon.sh passes this explicitly for every
-               // sample; the default is here only so the macro can be called by
-               // hand, and it matches what recon.sh uses for the nu-mode
-               // samples.
+
                std::string flux_file = "lbl_config/hk/t2kflux_2020_plus250kA_uniform.root",
-               // named explicitly so we cannot pick up ratehisto by accident
                std::string flux_hist = "enu_sk_numu",
                // 10 years of HK running is 2.7e22 POT total, split 1:3 nu:nubar,
                // so a nu-mode sample only sees a quarter of it.
@@ -43,49 +38,16 @@ int FakeRecon (std::string input_file,
     const double baseline_km = 295.0;
     const double rhoYe  = 2.6 * 0.5;   // Earth crust density x electron fraction
 
-    // The FCFV and single-ring efficiency is no longer a constant per category.
-    // It is read from response.root as a function of true neutrino energy, one
-    // curve per interaction category, and MakeResponse.C is where it is set.
-    // Constants could not do this job: the rate this chain produces relative to
-    // the paper is not flat in energy, it runs from 0.55 at the oscillation
-    // maximum to 1.0 by 1.4 GeV, and a single number per category cannot be
-    // right at both ends. See MakeResponse.C for what that curve contains.
+
 
     // True masses, GeV.
     const double m_mu = 0.105658;
     const double m_e  = 0.000511;
 
-    // Michel (decay) electron tagging, SK-IV, which is the era T2K and HK run
-    // in. These are the probability of tagging a decay electron from a stopped
-    // muon of each charge, and the mu- number already has nuclear capture on
-    // oxygen folded into it - that is why it is the lower of the two, and it is
-    // a real nu/nubar asymmetry rather than a detector one.
-    //
-    // SK-I to SK-III were 0.80 and 0.63. The gain came from new electronics
-    // removing the 800-1200 ns exclusion window forced by signal reflections,
-    // letting the full 20 us be recorded. mu- benefits more because its
-    // lifetime in oxygen is shorter, so more of its decays fell in the window
-    // that used to be cut.
-    //
-    // A stopped pi- is captured by the nucleus and yields no Michel at all.
-    // This all assumes the parent stops inside the detector, which the FCFV
-    // requirement already implies.
+
     const double michel_eff_plus  = 0.96;   // mu+
     const double michel_eff_minus = 0.83;   // mu-, capture included
-
-    // A pi+ only reaches the mu+ -> e+ chain if it stops first, and most of them
-    // do not: the pion-nucleus cross section in water is large enough that
-    // roughly half of the pi+ in this momentum range are absorbed or charge
-    // exchange in flight, which destroys the chain. Taking the mu+ number here
-    // instead, as this did, put 2.6x too many beam nue events into the
-    // nu-mode 1Re + 1 decay-e sample and took them out of the 0 decay-e one -
-    // a CC1pi+ nue event is exactly the topology that split depends on.
-    const double michel_eff_pip   = 0.45;   // pi+ -> mu+ -> e+, survival folded in
-
-    // The T2K 2020 public flux release is in units of 1/(cm^2 50MeV 1e21POT)
-    // with *variable* bin widths, so the bin contents are a density normalised
-    // to a 50 MeV reference bin, not per-bin counts. The fluence is therefore
-    // Integral("width") / 0.05, not Integral().
+    const double michel_eff_pip   = 0.45;   // pi+ -> mu+ -> e+
     const double flux_pot_norm     = 1.0e21;
     const double flux_bin_norm_GeV = 0.05;
 
@@ -102,10 +64,6 @@ int FakeRecon (std::string input_file,
         return 0;
     }
 
-    // Truth variables we need to build the weight and the fake recon quantities.
-    // Final-state particles are post-FSI, so anything in this list escaped the
-    // nucleus. nfsp tops out around 17 here; 100 is headroom, and the loop is
-    // clamped in case another sample is busier.
     const int kMaxFSP = 100;
     double fScaleFactor;
     float  Enu_true, ELep, CosLep, Q2;
@@ -258,23 +216,9 @@ int FakeRecon (std::string input_file,
         // it happens to CC and NC alike.
         //
         // They carry Q2 = -999 because the flat tree writer gives up on them
-        // before any of the derived kinematics are computed, and this is the
-        // same condition T2KReWeight applies: NIWGFlatTree::Fill returns early
-        // when no particle was chased (NIWGFlatTree.h:470) and EventWeightGen
-        // only fills its output tree when that flag is set
-        // (EventWeightGen.cxx:396-399). Dropping them here is what makes the two
-        // trees line up entry for entry, which is the only way to attach
-        // cross-section splines given there is no event ID to join on.
-        //
-        // 1530 of 200000 in the numu FHC sample. 986 were already going anyway,
-        // under the second condition below: they arrive with PDGLep = 0 and
-        // ELep = -999.9, the sentinel NUISANCE writes when the outgoing lepton
-        // did not make it into the dedicated branches, and that set turns out to
-        // be exactly the CC part of the Q2 = -999 set. The second test is kept
-        // because it guards a different assumption downstream, but it no longer
-        // removes anything on its own. The remaining 544 are the new losses,
-        // 0.27% of the sample, and they are removed from the rate along with
-        // everything else - a smaller shift than any systematic in this chain.
+        // before any of the derived kinematics are computed
+
+
         if (Q2 < -999.0) { ++n_dropped_no_lepton; continue; }
         if (cc && (PDGLep == 0 || ELep < 0.0)) { ++n_dropped_no_lepton; continue; }
 
@@ -373,10 +317,6 @@ int FakeRecon (std::string input_file,
             if (rng.Uniform() < eff) ++recon_ME;
         }
 
-        // Which sample this event lands in is not decided here. FakeSelect draws
-        // it from the mixing curves, so that everything the selection does lives
-        // in one place instead of being split between a likelihood invented here
-        // and a cut applied there.
 
         outtree->Fill();
 
@@ -414,11 +354,7 @@ int FakeRecon (std::string input_file,
         return 0;
     }
 
-    // The surviving count, not nentries. This is the number that has to equal
-    // the entries in this sample's T2KReWeight _Weight.flat.root, so printing
-    // the input count here would quietly defeat the one check that catches a
-    // misaligned spline join. outtree cannot be asked directly - FileOut was
-    // closed above.
+
     std::cout << "[INFO] wrote " << nentries - n_dropped_no_lepton
               << " entries to " << output_file
               << " (from " << nentries << " generated)" << std::endl;

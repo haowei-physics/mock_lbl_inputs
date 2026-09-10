@@ -11,11 +11,3 @@ mkdir -p $data_dir/parameters/oscProb
 mkdir -p $data_dir/parameters/det
 mkdir -p $data_dir/parameters/flux
 mkdir -p $data_dir/parameters/xsec
-mkdir -p $data_dir/gundam/outputs
-mkdir -p $data_dir/gundam/outputs_grid
-mkdir -p $data_dir/gundam/outputs_grid1d
-mkdir -p $data_dir/gundam/outputs_mcmc
-mkdir -p $data_dir/gundam/outputs_profile
-mkdir -p $data_dir/gundam/outputs_scan
-mkdir -p $data_dir/gundam/plots_grid
-mkdir -p $data_dir/gundam/logs

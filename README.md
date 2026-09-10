@@ -3,7 +3,8 @@
 This repository contains the MC input generators needed to run a fake MC sensitivity study.
 
     scripts/        scripts to run to generate the MC
-    src/            ROOT macros for simulated selection/weights
+    src/            ROOT macros for simulated selection/weights; NuFast_LBL.cpp is
+                    the NuFast oscillation code (P. Denton, MIT licence), used by FakeRecon.C
     gen/            generator cards, one per sample for generating neutrino events
     lbl_config      smearing/selection and beam flux files for different detectors
 

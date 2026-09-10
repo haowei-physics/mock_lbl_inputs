@@ -19,43 +19,17 @@
 // except the appearance/intrinsic split, which does, for the reason given
 // there.
 //
-// The assignment is a draw, not a cut. response.root holds, for each
-// interaction category and each true neutrino energy, the probability that a
-// surviving event ends up 1-ring mu-like, 1-ring e-like with no decay electron,
-// or 1-ring e-like with one; whatever is left over is rejected. FakeRecon has
-// already applied the FCFV and single-ring efficiency from the same file as a
-// weight, so between them the two stages are the entire selection.
-//
-// This replaces a chain of cuts on invented PID likelihoods. A mixing
-// probability is what such a cut produces once it has been integrated over
-// everything except energy, so modelling the likelihood in order to threshold
-// it was a long way round to the same number, with the thresholds and the
-// template shapes both free and only their product observable.
-//
-// isRHC is an argument rather than a local so both modes can be run without
-// editing the macro.
-// input_suffix picks which stage of the chain to read. "_spline.root" is the
-// output of MakeSplines.C and carries the cross-section response graphs;
-// "_fakerecon.root" is the stage before that and has none. Either works - the
-// graph branches are discovered rather than assumed, so dropping back to
-// fakerecon just produces an output tree with no cross-section dials in it.
+
 int FakeSelect (bool isRHC,
                 std::string input_dir,
                 std::string output_file,
                 std::string response_file = "lbl_config/hk/response.root",
                 UInt_t rng_seed = 20250731,
                 std::string input_suffix = "_spline.root") {
-    // The three sample types of arXiv:2505.15019 Tab. 2. The beam mode is
-    // already fixed by isRHC, so it is not part of the enum; 1Re1De exists in
-    // FHC only, as in the paper.
     enum SampleType {k1Rmu, k1Re, k1Re1De, kNSample};
     const int kNotSelected = -2;
 
-    // Interaction categories, in the order MakeResponse.C writes them and
-    // FakeRecon indexes them. Nothing here recomputes the category from truth:
-    // it is read from the RespCat branch, so the efficiency that was applied
-    // upstream and the mixing applied here cannot disagree about what an event
-    // is.
+    // Interaction categories
     const int kNCat = 9;
     const char *cat_name[kNCat] = {"numuCCQE", "numubarCCQE",
                                    "numuCCnonQE", "numubarCCnonQE",
@@ -335,12 +309,7 @@ int FakeSelect (bool isRHC,
             }
         }
 
-        // The only place the beam mode enters the sample index. FakeSelect still
-        // works in the three mixing outcomes throughout - the mixing matrix does
-        // not know about beam modes and should not - but the value written out is
-        // offset so the five Tab. 2 rows are five distinct numbers: nu mode keeps
-        // 0, 1, 2 and nubar mode becomes 3, 4. A GUNDAM sample is then one
-        // equality on one branch instead of a mode cut and a type cut.
+
         Theta_rec = TMath::RadToDeg() * std::acos(std::min(1.0f, std::max(-1.0f, CosLep_rec)));
 
         EventTypeOut = (sample == kNotSelected) ? kNotSelected

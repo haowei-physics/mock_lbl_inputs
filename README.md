@@ -40,3 +40,21 @@ the T2K public flux covariance for the flux block. The gundam configs read all
 of these as ${data_dir}/parameters/..., which gundamFitter expands.
 
 
+
+
+## GENIE
+
+The same inputs can be made with GENIE (R-3_06_02, tune G18_10b_02_11b, GENIE
+Reweight R-1_04_02) instead of NEUT and T2KReWeight. The GENIE stages are in
+`scripts/genie/`, with the samples listed in `gen/genie/samples.txt`; they
+write the same `<stem>_*.root` files, so `scripts/recon.sh`, `scripts/select.sh`
+and the macros in `src/` are shared. Use a separate `$data_dir`.
+
+    scripts/genie/build.sh                         compile the GENIE programs into build/
+    scripts/genie/run_all.sh                       the whole GENIE chain, in order
+
+    src/genie/          GENIE spline producer, checker and xsec parameter file
+    validation/genie/   dial scan and cross-checks (run_checks.sh)
+    docs/genie/         setup, pipeline, decisions and checks (README.md), dial study
+
+See `docs/genie/README.md`.

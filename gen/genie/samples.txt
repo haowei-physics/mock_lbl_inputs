@@ -1,0 +1,27 @@
+# GENIE sample manifest: one row per sample, read by scripts/genie/*.sh and the
+# GENIE programs. Fields are separated by '|'; '#' starts a comment.
+#
+#   name      GENIE sample name
+#   stem      NEUT-style output stem under $data_dir
+#   pdg       probe PDG passed to gevgen (interaction flavour)
+#   flux      flux file, relative to the repository
+#   hist      flux histogram
+#   nevents   events to generate
+#   run       gevgen run number
+#   seed      gevgen seed
+#   pot       POT for FakeRecon normalisation (as in scripts/recon.sh)
+#   flux_pdg  flavour of the flux (parent flavour for appearance samples)
+#
+# name                | stem                               | pdg | flux                                             | hist         | nevents | run    | seed   | pot      | flux_pdg
+numu_x_numu_fhc       | numu/numu_x_numu_200K_FHC          |  14 | lbl_config/hk/t2kflux_2020_plus250kA_uniform.root  | enu_sk_numu  | 200000  | 920000 | 400000 | 6.75e21  |  14
+numu_x_numu_rhc       | numu/numu_x_numu_50K_RHC           |  14 | lbl_config/hk/t2kflux_2020_minus250kA_uniform.root | enu_sk_numu  |  50000  | 920001 | 400001 | 2.025e22 |  14
+numubar_x_numubar_rhc | numubar/numubar_x_numubar_200K_RHC | -14 | lbl_config/hk/t2kflux_2020_minus250kA_uniform.root | enu_sk_numub | 200000  | 920002 | 400002 | 2.025e22 | -14
+numubar_x_numubar_fhc | numubar/numubar_x_numubar_50K_FHC  | -14 | lbl_config/hk/t2kflux_2020_plus250kA_uniform.root  | enu_sk_numub |  50000  | 920003 | 400003 | 6.75e21  | -14
+nue_x_nue_fhc         | nue/nue_x_nue_200K_FHC             |  12 | lbl_config/hk/t2kflux_2020_plus250kA_uniform.root  | enu_sk_nue   | 200000  | 920004 | 400004 | 6.75e21  |  12
+nue_x_nue_rhc         | nue/nue_x_nue_50K_RHC              |  12 | lbl_config/hk/t2kflux_2020_minus250kA_uniform.root | enu_sk_nue   |  50000  | 920005 | 400005 | 2.025e22 |  12
+nuebar_x_nuebar_rhc   | nuebar/nuebar_x_nuebar_200K_RHC    | -12 | lbl_config/hk/t2kflux_2020_minus250kA_uniform.root | enu_sk_nueb  | 200000  | 920006 | 400006 | 2.025e22 | -12
+nuebar_x_nuebar_fhc   | nuebar/nuebar_x_nuebar_50K_FHC     | -12 | lbl_config/hk/t2kflux_2020_plus250kA_uniform.root  | enu_sk_nueb  |  50000  | 920007 | 400007 | 6.75e21  | -12
+numu_x_nue_fhc        | numu/numu_x_nue_50K_FHC            |  12 | lbl_config/hk/t2kflux_2020_plus250kA_uniform.root  | enu_sk_numu  |  50000  | 920008 | 400008 | 6.75e21  |  14
+numu_x_nue_rhc        | numu/numu_x_nue_50K_RHC            |  12 | lbl_config/hk/t2kflux_2020_minus250kA_uniform.root | enu_sk_numu  |  50000  | 920009 | 400009 | 2.025e22 |  14
+numubar_x_nuebar_rhc  | numubar/numubar_x_nuebar_50K_RHC   | -12 | lbl_config/hk/t2kflux_2020_minus250kA_uniform.root | enu_sk_numub |  50000  | 920010 | 400010 | 2.025e22 | -14
+numubar_x_nuebar_fhc  | numubar/numubar_x_nuebar_50K_FHC   | -12 | lbl_config/hk/t2kflux_2020_plus250kA_uniform.root  | enu_sk_numub |  50000  | 920011 | 400011 | 6.75e21  | -14

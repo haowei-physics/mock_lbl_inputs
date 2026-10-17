@@ -98,7 +98,7 @@
 //    takes k_F from GENIE's generic PauliBlocker (GReWeightFGM calls this
 //    "a bit of a hack").
 //
-//  Reweighting setup copied from validation/genie/dial_scan.cxx (itself
+//  Reweighting setup follows the pre-production dial scan (itself
 //  following grwght1p of GENIE Reweight R-1_04_02): same tune, spline file,
 //  calculator list, mode switches and MEC Tl/ctl fix.
 // =============================================================================
@@ -218,8 +218,9 @@ void InitGenie(const std::string &msg_xml, const std::string &xsec_xml)
   Messenger::Instance()->SetPriorityLevel("ReW", pWARN);
 }
 
-// The calculators that can handle the dials above (dial_scan.cxx's list,
-// restricted to these dials). Which of them handles a dial is asked at run time.
+// The calculators that can handle the dials above (the pre-production dial
+// scan's list, restricted to these dials). Which of them handles a dial is
+// asked at run time.
 std::vector<std::pair<std::string, std::function<GReWeightI*()>>> Calculators()
 {
   return {
@@ -235,7 +236,7 @@ std::vector<std::pair<std::string, std::function<GReWeightI*()>>> Calculators()
   };
 }
 
-// The mode switches of gRwght1Param.cxx, as in dial_scan.cxx.
+// The mode switches of gRwght1Param.cxx, as in the pre-production dial scan.
 void ApplyMode(GReWeightI *calc, GSyst_t s)
 {
   if (s == kXSecTwkDial_MaCCQE)

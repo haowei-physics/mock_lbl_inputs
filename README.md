@@ -50,11 +50,9 @@ Reweight R-1_04_02) instead of NEUT and T2KReWeight. The GENIE stages are in
 write the same `<stem>_*.root` files, so `scripts/recon.sh`, `scripts/select.sh`
 and the macros in `src/` are shared. Use a separate `$data_dir`.
 
-    scripts/genie/build.sh                         compile the GENIE programs into build/
     scripts/genie/run_all.sh                       the whole GENIE chain, in order
 
-    src/genie/          GENIE spline producer, checker and xsec parameter file
-    validation/genie/   dial scan and cross-checks (run_checks.sh)
+    src/genie/          GENIE spline producer and xsec parameter file
     docs/genie/         setup, pipeline, decisions and checks (README.md), dial study
 
 See `docs/genie/README.md`.

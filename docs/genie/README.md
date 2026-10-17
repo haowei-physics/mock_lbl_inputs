@@ -31,19 +31,10 @@ export working_dir=/path/to/mock_lbl_inputs
 export data_dir=/path/to/genie_output_data      # a data_dir of its own, not the NEUT one
 ```
 
-The scripts do not set up software. Before running, put these on `PATH`:
-`root`, `root-config`, `genie-config`, `xml2-config`, `gmkspl`, `gspladd`,
-`gevgen`, `PrepareGENIE`, `nuisflat` and, for the GUNDAM checks, `gundamFitter`.
-`scripts/genie/build.sh` also needs
-
-```bash
-export GENIE=/path/to/GENIE                    # source tree (headers under src/)
-export GENIE_REWEIGHT=/path/to/GENIE-Reweight  # source tree, libraries under lib/
-export LOG4CPP=/path/to/log4cpp-install        # include/ and lib/
-export LHAPDF5=/path/to/lhapdf5/stage          # include/ and lib/ (the LHAPDF GENIE was built with)
-```
-
-and the GENIE runtime libraries on `LD_LIBRARY_PATH`.
+The scripts do not set up software. Before running, source the environment of
+your GENIE and GENIE Reweight installation, so that `root`, `gmkspl`, `gspladd`,
+`gevgen`, `PrepareGENIE` and `nuisflat` are on `PATH` and the GENIE and GENIE
+Reweight libraries are found at run time.
 
 ## Pipeline
 
@@ -55,7 +46,6 @@ Within each beam mode the row order is FakeSelect.C's file order.
 | step | script | tool | output in `$data_dir` |
 |---|---|---|---|
 | directories | `scripts/init_data_dir.sh` (shared) | mkdir | `numu/ ... parameters/` |
-| build | `scripts/genie/build.sh` | g++ | `$working_dir/build/` (ignored by git) |
 | cross sections | `scripts/genie/xsec.sh [flavour\|merge]` | `gmkspl`, `gspladd` | `genie/xsec/hk_v1_stock.xml` |
 | events | `scripts/genie/gen.sh [sample]` | `gevgen` + `gen/genie/Messenger_production.xml` | `genie/<sample>/<sample>.ghep.root`, `input-flux.root` |
 | flat trees | `scripts/genie/flat.sh [sample]` | `PrepareGENIE`, `nuisflat` | `<stem>_flattree.root` |
@@ -63,6 +53,11 @@ Within each beam mode the row order is FakeSelect.C's file order.
 | splines | `scripts/genie/splines.sh [sample]` | `src/genie/genie_splines.cxx` | `<stem>_spline.root` (+ `GenieDialMeta` tree) |
 | selection | `scripts/select.sh` (shared) | `src/FakeSelect.C` | `fakeselect_{FHC,RHC}.root` |
 | parameters | `scripts/genie/make_covariances.sh [all\|FHC\|RHC]` | `src/MakeCovariances.C` (osc/det/flux), `src/MakeOscGrid.C`, `src/genie/MakeGenieXsecCov.C` | `parameters/{oscProb,det,flux}/`, `parameters/xsec/xsecCovGENIE.root` |
+
+`src/genie/genie_splines.cxx` is a compiled program. Build it against your
+local ROOT, GENIE and GENIE Reweight installation (the same libraries as GENIE
+Reweight's `grwght1p`) and place the executable at
+`$working_dir/build/genie_splines`, where `scripts/genie/splines.sh` expects it.
 
 `<stem>` is the NEUT name (e.g. `numu/numu_x_numu_200K_FHC`). `[sample]` is a
 name or 0-based row index of the manifest; without it a script runs all 12
@@ -107,21 +102,6 @@ scripts/genie/make_covariances.sh
 `sbatch` passes the environment (`working_dir`, `data_dir`, `PATH`, ...) to
 the job by default. A spline task takes about 1.5 min for a 50k sample and
 2.5 min for a 200k sample (about 1 min of it is GENIE initialisation).
-
-## Validation
-
-`validation/genie/run_checks.sh <step>` (after `scripts/genie/build.sh`) writes
-everything under `$data_dir/validation/`, logs in `$data_dir/validation/logs/`.
-
-| step | what |
-|---|---|
-| `scan [sample]`, `summarize` | one-at-a-time dial scan (`dial_scan.cxx`) at −2, −1, +1, +2σ → `dial_scan/part_<sample>.root`, summary tables and ratio plots; the basis of [report.md](report.md) and of `check` |
-| `aux [sample]` | auxiliary scan checks (`dial_aux.cxx`): zero/negative weights, ±0.01σ offsets, subsample errors |
-| `modestats` | interaction-mode composition of the samples (`mode_stats.cxx`) |
-| `check [sample]` | file-level checks of `<stem>_spline.root` (`check_genie_splines`): row match, TGraph split 0, knots, weight 1 at the nominal, no NaN/negative weights, norm y = x, ±1σ/±2σ rates vs the dial scan |
-| `checksel FHC\|RHC` | FakeSelect output vs a FakeSelect of the same events without dials: same sample draw, graphs identical to their inputs |
-| `interp [sample]`, `interpcheck [sample]` | GENIE weights at ±0.5σ, ±1.5σ vs GUNDAM's interpolation of the graphs; `interpcheck` adds the linear and monotonic variants for CCQEPauliSupViaKF |
-| `dryrun`, `onesigma`, `gundamcheck` (`FHC\|all`) | GUNDAM dry run and prefit one-sigma variations, and their cross-checks `count_dials.C` / `bin_check.C`; need `GUNDAM_CONFIG` pointing to the GENIE GUNDAM config |
 
 ## Main decisions
 
@@ -185,8 +165,8 @@ dial study behind it is in [report.md](report.md) and
 | File level: ±1σ/±2σ per-sample rates vs the dial scan | agree to ≤ 4×10⁻¹¹ %, except MaCCQE in samples with rejected events (≤ 0.1%) |
 | FakeSelect FHC and RHC | sample draw identical to the no-dial FakeSelect; graphs identical to their inputs |
 | osc/det/flux parameter files | identical to the NEUT ones |
-| GUNDAM dry run: dial counts per parameter and sample vs `count_dials.C` | 30 × 6 columns, 0 differences |
-| GUNDAM +1σ per Eν bin vs the graphs (`bin_check.C`) | 1650 values, agree to ≤ 6×10⁻¹⁰ % |
+| GUNDAM dry run: dial counts per parameter and sample vs an independent recount from the FakeSelect output | 30 × 6 columns, 0 differences |
+| GUNDAM +1σ per Eν bin vs the same variation computed from the graphs in the FakeSelect output | 1650 values, agree to ≤ 6×10⁻¹⁰ % |
 | Interpolation at ±0.5σ and ±1.5σ: GUNDAM's interpolation vs GENIE computed directly (numu_x_numu_fhc) | within about 1% of each dial's effect for the catmull-rom dials; CCQEPauliSupViaKF see below |
 
 These were run with the development scripts this code was restructured from.
@@ -196,8 +176,8 @@ numu_x_nue_50K_FHC its output is bitwise identical to the production file
 
 **Known limitation: CCQEPauliSupViaKF interpolation.** A blocked event has
 knots (1, 1, 1, 0, 0). Three GUNDAM interpolations were compared with GENIE
-(`validation/genie/run_checks.sh interpcheck numu_x_numu_fhc`). The table gives
-the largest rate difference over the 3 FHC samples, in % of the rate:
+on numu_x_numu_fhc. The table gives the largest rate difference over the 3 FHC
+samples, in % of the rate:
 
 | twk | catmull-rom (in use) | linear (Graph) | catmull-rom, monotonic |
 |---|---|---|---|
@@ -228,7 +208,5 @@ antineutrino samples have not been checked.
 - `gen/genie/samples.txt`: the sample manifest; `gen/genie/Messenger_production.xml`: GENIE message thresholds.
 - `scripts/genie/`: the stage scripts above.
 - `src/genie/genie_splines.cxx`: producer, with the decision log in its header.
-- `src/genie/check_genie_splines.cxx`: checker with three modes: per sample, `select`, `interp`.
 - `src/genie/MakeGenieXsecCov.C`: writes `xsecCovGENIE.root` (same keys as `xsecCovHK.root`).
-- `validation/genie/`: dial scan (`dial_scan.cxx`, `dial_aux.cxx`, `mode_stats.cxx`), GUNDAM cross-checks (`count_dials.C`, `bin_check.C`) and `run_checks.sh`.
 - `docs/genie/`: this file; [report.md](report.md) (dial scan and dial choice), [spline_plan.md](spline_plan.md) (the plan before production), [neut_knot_settings.md](neut_knot_settings.md) (the NEUT chain's knots and spline format), [genie_default_dials.md](genie_default_dials.md) (GENIE Reweight's default dials and σ). The last two record the paths of the development area where they were examined.

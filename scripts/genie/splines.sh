@@ -8,14 +8,14 @@
 #   scripts/genie/splines.sh <sample>    one sample, by name or 0-based row index
 #   NEV=<n> scripts/genie/splines.sh ... first n events only (a test)
 #
-# Run scripts/genie/build.sh first.
+# Compile src/genie/genie_splines.cxx first, see docs/genie/README.md.
 [ -n "$working_dir" ] || { echo "working_dir is not set"; exit 1; }
 cd "$working_dir"
 [ -n "$data_dir" ] || { echo "data_dir is not set"; exit 1; }
 NEV="${NEV:--1}"
 
 BIN="$working_dir/build/genie_splines"
-[ -x "$BIN" ] || { echo "ERROR: $BIN missing, run scripts/genie/build.sh"; exit 1; }
+[ -x "$BIN" ] || { echo "ERROR: $BIN missing, compile src/genie/genie_splines.cxx first (see docs/genie/README.md)"; exit 1; }
 XSEC="$data_dir/genie/xsec/hk_v1_stock.xml"
 MSG="$working_dir/gen/genie/Messenger_production.xml"
 

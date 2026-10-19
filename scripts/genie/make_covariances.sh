@@ -1,5 +1,5 @@
 #!/bin/bash
-# GENIE counterpart of scripts/make_covariances.sh. Writes into $data_dir/parameters/:
+# GENIE counterpart of scripts/neut/make_covariances.sh. Writes into $data_dir/parameters/:
 #   oscProb, det, flux   the generator-independent files of src/MakeCovariances.C
 #                        (MakeOscCov, MakeDetCov, MakeFluxCov with the arguments
 #                        MakeCovariances() uses; MakeXsecCov is not called, since it

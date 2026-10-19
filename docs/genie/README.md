@@ -138,7 +138,7 @@ dial study behind it is in [report.md](report.md) and
     FakeSelect cannot see.
   - MaCCQEshape and the RES shape dials are alternative parametrisations.
   - NormCCRES/NormNCRES would double count MaRES.
-- **Per-event rules as in `src/MakeSplines.C`:**
+- **Per-event rules as in `src/neut/MakeSplines.C`:**
   - the nominal knot has weight exactly 1;
   - all weights equal to 1 gives an empty graph;
   - NaN, negative or all-zero weights give an empty graph, counted as rejected

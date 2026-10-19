@@ -19,19 +19,19 @@ Before running, export where this repository is and where the generated files go
 
 ## Generating the input
 
-    scripts/run_all.sh                             every stage below, in order, stopping at the first failure
+    scripts/neut/run_all.sh                        every stage below, in order, stopping at the first failure
 
 or one at a time:
 
     scripts/init_data_dir.sh                      makes sub-directories under $data_dir
 
-    scripts/gen.sh                                 NEUT events               numu/*.root ...
-    scripts/weight.sh                              T2KReWeight spline trees  *_Weight.flat.root
-    scripts/flat.sh                                flatten NEUT outputs      *_flattree.root
+    scripts/neut/gen.sh                            NEUT events               numu/*.root ...
+    scripts/neut/weight.sh                         T2KReWeight spline trees  *_Weight.flat.root
+    scripts/neut/flat.sh                           flatten NEUT outputs      *_flattree.root
     scripts/recon.sh                               FakeRecon.C               *_fakerecon.root
-    scripts/splines.sh                             MakeSplines.C             *_spline.root
+    scripts/neut/splines.sh                        MakeSplines.C             *_spline.root
     scripts/select.sh                              FakeSelect.C              fakeselect_FHC.root, fakeselect_RHC.root
-    scripts/make_covariances.sh                    MakeCovariances.C         parameters/{oscProb,det,flux,xsec}/*.root, *Binning.txt
+    scripts/neut/make_covariances.sh               MakeCovariances.C         parameters/{oscProb,det,flux,xsec}/*.root, *Binning.txt
                                                    MakeOscGrid.C             parameters/oscProb/grid_HK.root
 
 MakeCovariances.C writes the oscillation, detector, cross-section and flux

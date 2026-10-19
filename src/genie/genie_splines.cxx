@@ -46,7 +46,7 @@
 //    RDecBR, FracPN/FracDelta (final state only; FakeSelect cannot see them),
 //    MaCCQEshape and the RES shape dials (alternative parametrisations),
 //    NormCCRES/NormNCRES (would double count MaCCRES/MaNCRES).
-//  * Per-event rules copied from src/MakeSplines.C:
+//  * Per-event rules copied from src/neut/MakeSplines.C:
 //      - nominal knot written with weight exactly 1;
 //      - all weights exactly 1 -> empty graph (no response, no GUNDAM dial);
 //      - any weight NaN/inf/negative, or all weights 0 -> empty graph, counted

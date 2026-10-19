@@ -7,7 +7,7 @@
 #   scripts/genie/xsec.sh <flavour>    one flavour (numu, numubar, nue, nuebar), no merge
 #   scripts/genie/xsec.sh merge        the merge only
 #
-# One flavour takes about a day; docs/genie/README.md shows how to run the four
+# One flavour takes about a day; README.md shows how to run the four
 # as separate jobs.
 [ -n "$working_dir" ] || { echo "working_dir is not set"; exit 1; }
 cd "$working_dir"

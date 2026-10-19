@@ -1,7 +1,7 @@
 #!/bin/bash
 # The GENIE chain, in order, into $data_dir. Stops at the first stage that fails.
 # Source your setup first: gmkspl, gspladd, gevgen, PrepareGENIE, nuisflat,
-# root on PATH, and build/genie_splines compiled (docs/genie/README.md).
+# root on PATH, and build/genie_splines compiled (README.md).
 # FakeRecon and FakeSelect run through the shared scripts/recon.sh and
 # scripts/select.sh, so use a data_dir of its own for GENIE.
 

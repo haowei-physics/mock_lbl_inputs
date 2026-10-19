@@ -21,7 +21,7 @@
 //  every sample.
 //
 //  ---------------------------------------------------------------------------
-//  Decision log (agreed 2026-10-06; see docs/genie/report.md)
+//  Decision log (agreed 2026-10-06; summarised in README.md)
 //
 //  * Follow GENIE's own settings, not the T2KReWeight/NEUT parameter set.
 //    Central values: the stock G18_10b_02_11b tune, read at run time from the
@@ -71,7 +71,8 @@
 //  * (Stage A note) The AhrensNCELPXSec.xml of the "neutlike" config variant
 //    (not part of this repository) sets EL-Axial-Eta = 0, which would make
 //    EtaNCEL a null dial (x = 0*(1 + n*sigma)). This chain sets no GXMLPATH or
-//    --xml-path, so the stock GENIE config (0.12) is used, as in the dial scan. Guarded: the run stops unless the registry
+//    --xml-path, so the stock GENIE config (0.12) is used, as in the
+//    pre-production dial scan. Guarded: the run stops unless the registry
 //    gives EtaNCEL = 0.12 (expect value in kDials).
 //
 //  * (Stage C decision) CCQEPauliSupViaKF stays plain catmull-rom, like the
@@ -80,8 +81,9 @@
 //    final nucleon momentum is below the tweaked k_F), so a blocked event has
 //    knots (1, 1, 1, 0, 0) and no 5-knot interpolation is exact between knots
 //    (all are exact at the knots). Three interpolations were compared with
-//    GENIE at -1.5, -0.5, +0.5, +1.5 sigma (numu_x_numu_fhc; largest rate
-//    difference over the 3 FHC samples, % of the rate):
+//    GENIE at -1.5, -0.5, +0.5, +1.5 sigma (manifest sample numu_x_numu_fhc;
+//    largest rate difference over the 3 FHC analysis samples of FakeSelect,
+//    1Rmu, 1Re0de, 1Re1de; % of the rate):
 //        twk     catmull-rom   linear (Graph)   catmull-rom, monotonic
 //        -1.5    2e-5          5e-5             5e-5
 //        -0.5    0.177         1.2e-4           9e-6
@@ -152,7 +154,7 @@ const std::string kTune    = "G18_10b_02_11b";
 // ------------------------------------------------------------------ dials
 // model/key: where the calculator reads its nominal value (empty = the dial
 // scales something by (1 + n*sigma), so the nominal is 1).
-// expect: tune value from docs/genie/report.md; the run stops if the registry disagrees
+// expect: the stock tune value; the run stops if the registry disagrees
 // (0 = not checked, only logged).
 struct DialDef {
   const char *name;

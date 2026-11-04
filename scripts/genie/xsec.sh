@@ -1,7 +1,7 @@
 #!/bin/bash
 # GENIE cross-section splines for the HK targets (O16 + H1), one gmkspl run per
 # neutrino flavour, merged with gspladd into $data_dir/genie/xsec/hk_v1_stock.xml.
-# Stock G18_10b_02_11b tune, no --xml-path. Needs gmkspl and gspladd on PATH.
+#  G18_10b_02_11b tune, no --xml-path. Needs gmkspl and gspladd on PATH.
 #
 #   scripts/genie/xsec.sh              all four flavours, then the merge
 #   scripts/genie/xsec.sh <flavour>    one flavour (numu, numubar, nue, nuebar), no merge
